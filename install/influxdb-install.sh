@@ -24,8 +24,10 @@ curl -fsSL "https://repos.influxdata.com/influxdata-archive_compat.key" | gpg --
 echo "deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg] https://repos.influxdata.com/debian stable main" >/etc/apt/sources.list.d/influxdata.list
 msg_ok "Set up InfluxDB Repository"
 
-read -r -p "Which version of InfluxDB to install? (1 or 2) " prompt
-if [[ $prompt == "2" ]]; then
+read -r -p "Which version of InfluxDB to install? (1 or 2 or 3) " prompt
+if [[ $prompt == "3" ]]; then
+  INFLUX="3"
+elif [[ $prompt == "2" ]]; then
   INFLUX="2"
 else
   INFLUX="1"
@@ -33,7 +35,11 @@ fi
 
 msg_info "Installing InfluxDB"
 $STD apt-get update
-if [[ $INFLUX == "2" ]]; then
+if [[ $INFLUX == "3" ]]; then
+  $STD apt-get install -y curl
+  curl -O https://www.influxdata.com/d/install_influxdb3.sh &&
+    sh install_influxdb3.sh
+elif [[ $INFLUX == "2" ]]; then
   $STD apt-get install -y influxdb2
 else
   $STD apt-get install -y influxdb
